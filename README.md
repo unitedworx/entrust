@@ -325,6 +325,16 @@ var_dump($allValidations);
 // }
 ```
 
+The `Entrust` class has shortcuts to `ability()` for the currently logged in user:
+
+```php
+Entrust::ability('admin,owner', 'create-post,edit-user');
+
+// is identical to
+
+Auth::user()->ability('admin,owner', 'create-post,edit-user');
+```
+
 ### Short syntax route filter
 
 To filter a route by permission or role you can call the following in your `app/Http/routes.php`:
