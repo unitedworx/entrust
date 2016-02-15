@@ -37,7 +37,7 @@ trait EntrustUserTrait
     protected function callBeforeCanCallbacks($user, $permission, array $arguments)
     {
         $arguments = array_merge([$user, $permission], $arguments);
-        foreach ($this->beforeCallbacks as $before) {
+        foreach ($this->beforeCanCallbacks as $before) {
             if (! is_null($result = call_user_func_array($before, $arguments))) {
                 return $result;
             }
