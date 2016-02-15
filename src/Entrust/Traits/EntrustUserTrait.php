@@ -14,6 +14,36 @@ use InvalidArgumentException;
 
 trait EntrustUserTrait
 {
+
+    // All of the registered before callbacks.
+    protected $beforeCanCallbacks = [];
+
+    // Register a callback to run before all permission checks.
+    public function before(callable $callback)
+    {
+        $this->beforeCanCallbacks[] = $callback;
+        return $this;
+    }
+
+
+    /**
+     * Call all of the before callbacks and return if a result is given.
+     *
+     * @param  $user
+     * @param  string  $permission
+     * @param  array  $arguments
+     * @return bool|null
+     */
+    protected function callBeforeCanCallbacks($user, $permission, array $arguments)
+    {
+        $arguments = array_merge([$user, $permission], $arguments);
+        foreach ($this->beforeCallbacks as $before) {
+            if (! is_null($result = call_user_func_array($before, $arguments))) {
+                return $result;
+            }
+        }
+    }
+
     //Big block of caching functionality.
     public function cachedRoles()
     {
@@ -134,6 +164,11 @@ trait EntrustUserTrait
             foreach ($this->cachedRoles() as $role) {
                 // Validate against the Permission table
                 foreach ($role->cachedPermissions() as $perm) {
+
+                    if (!is_null($result = $this->callBeforeCanCallbacks($user = $this, $permission, $arguments))) {
+                        return $result;
+                    }
+
                     if (str_is( $permission, $perm->name) ) {
                         return true;
                     }
