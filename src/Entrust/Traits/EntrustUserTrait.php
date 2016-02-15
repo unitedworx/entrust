@@ -19,7 +19,7 @@ trait EntrustUserTrait
     protected $beforeCanCallbacks = [];
 
     // Register a callback to run before all permission checks.
-    public function before(callable $callback)
+    public function beforeCan(callable $callback)
     {
         $this->beforeCanCallbacks[] = $callback;
         return $this;
